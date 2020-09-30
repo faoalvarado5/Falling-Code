@@ -23,30 +23,23 @@ start:
 	call code
 	
 code:
-
-	;mov ah,08h ;limpia el buffer de keystroke    
-	;int 21h
 	
-	;mov ah, 01h
-	;int 16h
-	;jz _printcharacter
-	
-	call _inputcharacter
+	mov ah, 01h
+	int 16h
+	jnz _inputcharacter
 	
 	call _timer
-
-	call _printcharacter
 	
 	call _scrollDown
 	
-	call code
+	jmp code
 	
 _printcharacter:
 
 	call _imprimir
 
 	mov dh, 1 ;setea el cursor en la linea 1
-	mov dl, 5 ;setea el cursor en la columna 1
+	mov dl, 5 ;setea el cursor en la columna 5
 	mov bh, 0 ;setea el cursor en la pagina 0
 	mov ah, 2 
 	int 10h
@@ -77,17 +70,22 @@ _printcharacter:
 	
 	call _imprimir
 	
-	ret
+	call _scrollDown
+	
+	call code
 	
 _inputcharacter:
 
 	mov ah, 00h ;lee el input del usuario y lo almacena en al
 	int 16h
+	
+	call _printcharacter
+	
 	ret
 	
 _timer:
 	
-	mov cx, 10h ;intervalo de tiempo
+	mov cx, 20h ;intervalo de tiempo
 	mov dx, 968h ; intervalo de tiempo
 	mov ah, 86h
 	int 15h
